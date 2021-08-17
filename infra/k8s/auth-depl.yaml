@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: kurumkan/auth
+          image: kurumkan/authentication
           env: # environment variables
             - name: MONGO_URI
               value: 'mongodb://auth-mongo-srv:27017/auth'
@@ -36,5 +36,3 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: 3000
-
-

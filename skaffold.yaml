@@ -9,7 +9,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: kurumkan/auth
+    - image: kurumkan/authentication
       context: auth
       docker:
         dockerfile: Dockerfile

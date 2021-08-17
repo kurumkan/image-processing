@@ -28,7 +28,7 @@ spec:
               '2',
               '-SD',
               '-cid',
-              'imgproc',
+              'ticketing',
             ]
 ---
 apiVersion: v1
