@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage
+  template:
+    metadata:
+      labels:
+        app: storage
+    spec:
+      containers:
+        - name: storage
+          image: kurumkan/storage
+          env: # environment variables
+            - name: SPACES_URL
+              value: 'ams3.digitaloceanspaces.com'
+            - name: SPACES_BUCKET
+              value: 'imgproc-storage'
+            - name: SPACES_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: spaces-key
+                  key: SPACES_KEY
+            - name: SPACES_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: spaces-secret
+                  key: SPACES_SECRET
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-srv
+spec:
+  selector:
+    app: storage
+  ports:
+    - name: storage
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
