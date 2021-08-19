@@ -12,7 +12,7 @@ router.delete('/api/images/:name', requireAuth, async (req: Request, res: Respon
 
     const client = AwsClient.getInstance();
 
-    client.deleteObject(folder, fileName,function(err, data) {
+    client.deleteObject(folder, fileName,(err, data) => {
         if (err) {
             console.log('Delete file error', err);
             throw new StorageConnectorError();
@@ -22,6 +22,5 @@ router.delete('/api/images/:name', requireAuth, async (req: Request, res: Respon
         }
     });
 });
-
 
 export { router as deleteRouter };

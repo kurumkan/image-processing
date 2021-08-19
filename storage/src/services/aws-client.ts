@@ -41,6 +41,17 @@ class AwsS3 {
 
         this.client.listObjects(params, callback);
     }
+
+    public checkIfExists(folder: string, fileName: string, callback: (err: AWSError, data: S3.Types.HeadObjectOutput) => void) {
+        const params = {
+            Bucket: bucket,
+            Key: `${folder}/${fileName}`
+        }
+
+        console.log('filename', params.Key)
+
+        this.client.headObject(params, callback);
+    }
 }
 
 class AwsClient {

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-
-import { requireAuth } from '@kurumkanimgproc/common';
+import { requireAuth, StorageConnectorError } from '@kurumkanimgproc/common';
+import { AwsClient } from "../services/aws-client";
 
 const router = express.Router();
 
@@ -18,11 +18,19 @@ router.get('/api/images/:transformation/:name', requireAuth, (req: Request, res:
     const transformation = req.params.transformation;
     const fileName = req.params.name;
 
-    // we should check if transformation exists
-    // if true - redirect: res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${transformation_fileName}`);
-    // else make request to imgproc - get image from there and return
+    const client = AwsClient.getInstance();
+    client.checkIfExists(folder, `${transformation}_${fileName}`, (err, data) => {
+        if (err) {
+            if(err.code === 'NotFound') {
+                return res.redirect(`https://image-processor/api/${folder}/${transformation}/${fileName}`);
+            } else {
+                console.log('Head Request error', err);
+                throw new StorageConnectorError();
+            }
+        }
 
-    res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${fileName}`);
+        res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${transformation}_${fileName}`);
+    });
 });
 
 export { router as downloadRouter };
