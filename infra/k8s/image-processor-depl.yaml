@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-processor-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-processor
+  template:
+    metadata:
+      labels:
+        app: image-processor
+    spec:
+      containers:
+        - name: image-processor
+          image: kurumkan/image-processor
+          env: # environment variables
+            - name: REDIRECT_URL
+              value: 'https://imgproc-storage.ams3.digitaloceanspaces.com/'
+            - name: SPACES_URL
+              value: 'https://ams3.digitaloceanspaces.com'
+            - name: SPACES_BUCKET
+              value: 'imgproc-storage'
+            - name: SPACES_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: spaces-key
+                  key: SPACES_KEY
+            - name: SPACES_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: spaces-secret
+                  key: SPACES_SECRET
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-processor-srv
+spec:
+  type: NodePort
+  selector:
+    app: image-processor
+  ports:
+    - name: image-processor
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

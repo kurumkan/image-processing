@@ -20,3 +20,8 @@ spec:
             backend:
               serviceName: storage-srv
               servicePort: 3000
+          - path: /api/transform/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: image-processor-srv
+              servicePort: 3000
