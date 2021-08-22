@@ -25,3 +25,8 @@ spec:
             backend:
               serviceName: image-processor-srv
               servicePort: 3000
+          - path: /api/meta/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: metadata-srv
+              servicePort: 3000

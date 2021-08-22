@@ -41,3 +41,11 @@ build:
         manual:
           - src: './**/*.go'
             dest: .
+    - image: kurumkan/metadata
+      context: metadata
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .

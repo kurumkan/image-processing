@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-mongo-depl
+spec:
+  replicas: 1
+  selector: # select pod
+    matchLabels:
+      app: metadata-mongo
+  template: # how to create pod
+    metadata:
+      labels:
+        app: metadata-mongo # name of pod
+    spec:
+      containers:
+        - name: metadata-mongo # our image
+          image: mongo # source image
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metadata-mongo-srv
+spec:
+  selector:
+    app: metadata-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
