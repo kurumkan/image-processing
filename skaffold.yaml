@@ -49,3 +49,11 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: kurumkan/ui
+      context: ui
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .

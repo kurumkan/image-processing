@@ -30,3 +30,7 @@ spec:
             backend:
               serviceName: metadata-srv
               servicePort: 3000
+          - path: /?(.*)
+            backend:
+              serviceName: ui-srv
+              servicePort: 3000
