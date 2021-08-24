@@ -21,7 +21,6 @@ router.post('/api/images', requireAuth, [
             .withMessage('contentType must be provided')
     ], validateRequest,
     (req: Request, res: Response) => {
-        // const folder = req.currentUser!.id;
         const folder = req.currentUser!.id;
         const fileName = req.body.fileName;
         const contentType = req.body.contentType;

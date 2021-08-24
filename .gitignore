@@ -1,3 +1,4 @@
 node_modules/
 ui/.next
 .idea/
+ui/mock-server.js
