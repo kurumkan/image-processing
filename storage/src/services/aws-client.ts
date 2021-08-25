@@ -21,16 +21,21 @@ class AwsS3 {
         this.client.deleteObject(params, callback)
     }
 
-    public getSignedUrl(folder:string, fileName:string, contentType: string): string {
-        const expireSeconds = 60 * 5;
+    public getSignedUrl(folder:string, fileName:string, contentType: string): { key: string, url: string } {
+        const expireSeconds = 10 * 60;
+        const key = `${folder}/${fileName}`;
 
         const params = {
-            Key: `${folder}/${fileName}`,
+            Key: key,
             Expires: expireSeconds,
             Bucket: bucket,
-            ContentType: contentType
+            ContentType: contentType,
+            ACL: 'public-read'
         };
-        return this.client.getSignedUrl('putObject', params);
+        return {
+            url: this.client.getSignedUrl('putObject', params),
+            key
+        };
     }
 
     public listObjects(folder:string, callback: (err: AWSError, data: S3.Types.ListObjectsOutput) => void):void {
@@ -45,10 +50,9 @@ class AwsS3 {
     public checkIfExists(folder: string, fileName: string, callback: (err: AWSError, data: S3.Types.HeadObjectOutput) => void) {
         const params = {
             Bucket: bucket,
-            Key: `${folder}/${fileName}`
+            Key: `${folder}/${fileName}`,
+            ACL: 'public-read'
         }
-
-        console.log('filename', params.Key)
 
         this.client.headObject(params, callback);
     }

@@ -28,8 +28,11 @@ router.post('/api/images', requireAuth, [
         const client = AwsClient.getInstance();
 
         try {
-            const url = client.getSignedUrl(folder, fileName, contentType);
-            res.status(200).send(url);
+            const { url, key } = client.getSignedUrl(folder, fileName, contentType);
+            res.status(200).json({
+                url,
+                key
+            });
         } catch (e) {
             console.log('Upload file error', e);
             throw new StorageConnectorError();

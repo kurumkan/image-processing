@@ -23,7 +23,6 @@ const ImgWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #eee;
 `;
 
 const Img = styled.img`

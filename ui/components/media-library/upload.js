@@ -1,56 +1,39 @@
-import { useState } from 'react';
-import {Upload, message, Button } from 'antd';
+import axios from 'axios';
+import { message, Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import useRequest from "../../hooks/use-request";
 
 const UploadComponent = () => {
-    const [fileName, setFileName] = useState('');
-    const [contentType, setContentType] = useState('');
-    const [uploadUrl, setUploadUrl] = useState('');
+    const onFileSelect = async ({ file }) => {
+        console.log('onfilechange', file)
+        try {
+            const {data: {url}} = await axios.post('/api/images', {
+                fileName: file.name,
+                contentType: file.type
+            });
 
-    const { doRequest } = useRequest({
-        url: `http://localhost:5000/api/images`,
-        method: 'post',
-        body: {
-            fileName,
-            contentType
-        },
-        onSuccess: data => { console.log('data', data) || setUploadUrl(data) }
-    });
-
-    console.log('name', fileName)
-    console.log('url', uploadUrl)
-
-    const attrs = {
-        name: 'file',
-        showUploadList: false,
-        action: uploadUrl,
-        headers: {
-            authorization: 'authorization-text',
-        },
-        beforeUpload: async file => {
-            console.log('before', file)
-            setContentType(file.type);
-            setFileName(file.name);
-            await doRequest();
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log('uploading', info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success('success',`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error('error',`${info.file.name} file upload failed.`);
-            }
-        },
-    };
+            await axios.put(url, file, {
+                headers: {
+                    'Content-Type': file.type,
+                    'x-amz-acl': 'public-read'
+                }
+            });
+            message.success('File has been uploaded');
+        } catch (e) {
+            message.error('Failed to upload the file');
+        }
+    }
 
     return (
-        <Upload {...attrs}>
-            <Button type="primary" icon={<UploadOutlined />}>Upload</Button>
+        <Upload
+            accept="image/*"
+            customRequest={onFileSelect}
+            showUploadList={false}
+        >
+            <Button icon={<UploadOutlined/>} type="primary">
+                Upload
+            </Button>
         </Upload>
-    )
+    );
 }
 
 export default UploadComponent;

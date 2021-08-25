@@ -8,6 +8,14 @@ const { Header, Content, Sider } = Layout;
 const ContentWrapper = styled(Content)`
   margin: 74px 60px 30px 380px;
 `
+
+const EmptyWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  padding-left: 350px;
+`;
+
 /*
     - list images
     - change metadata
@@ -56,7 +64,9 @@ const MediaLibraryPage =  ({ images = [] }) => {
             </Layout>
             <ContentWrapper>
                 <If condition={!images.length}>
-                    <Empty />
+                    <EmptyWrapper>
+                        <Empty />
+                    </EmptyWrapper>
                 </If>
                 <If condition={images.length}>
                     <Row gutter={20}>
