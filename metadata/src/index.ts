@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from "./nats-wrapper";
+import { FileUploadedListener } from "./events/listeners/file-uploaded-listener";
+import { FileRemovedListener } from "./events/listeners/file-removed-listener";
 
 const PORT = 3000;
 
@@ -40,7 +42,8 @@ const start = async () => {
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
 
-    // new ImageUploadedListener(natsWrapper.client).listen();
+    new FileUploadedListener(natsWrapper.client).listen();
+    new FileRemovedListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {
       // this config is to remove warnings from mongodb

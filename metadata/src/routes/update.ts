@@ -11,13 +11,13 @@ import { Meta } from '../models/meta';
 
 const router = express.Router();
 
-router.put('/api/meta/:id', requireAuth, [
+router.put('/api/meta/:fileName', requireAuth, [
     body('lowsrc')
         .optional()
         .isURL()
         .withMessage('lowsrc must be a valid url')
 ], validateRequest, async (req: Request, res: Response) => {
-    const meta = await Meta.findById(req.params.id);
+    const meta = await Meta.findOne({ fileName: req.params.fileName });
 
     if(!meta) {
         throw new NotFoundError();
@@ -33,15 +33,15 @@ router.put('/api/meta/:id', requireAuth, [
 
     const { title, lowsrc, alt } = req.body;
 
-    if (!!title) {
+    if (title) {
         meta.set({ title });
     }
 
-    if (!!lowsrc) {
+    if (lowsrc) {
         meta.set({ lowsrc });
     }
 
-    if (!!alt) {
+    if (alt) {
         meta.set({ alt });
     }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Col, Row, Layout, Menu, Empty, Button } from 'antd';
 import styled from 'styled-components';
 import Item from '../../../components/media-library/item';
@@ -24,13 +24,35 @@ const EmptyWrapper = styled.div`
     - upload images
  */
 
-const MediaLibraryPage =  ({ images = [] }) => {
+const MediaLibraryPage =  ({ images: imagesProps = [] }) => {
     const [currentImage, setCurrentImage] = useState({
         title: '',
         alt: '',
-        displayName: '',
-        url: ''
+        url: '',
+        fileName: ''
     });
+
+    const [images, setImages] = useState(imagesProps);
+
+    const onUpload = image => {
+        setImages([{ alt: '', title: '', ...image }, ...images]);
+    }
+
+    const onDelete = deletedUrl => {
+        const newImages = images.filter(({ url }) => deletedUrl !== url);
+        setImages(newImages);
+        setCurrentImage(newImages[0] || { alt: '', url: '', title: '' });
+    }
+
+    const onUpdate = ({ title, alt, url }) => {
+        const index = images.findIndex(i => i.url === url);
+        const newImages = [...images];
+        newImages[index].title = title;
+        newImages[index].alt = alt;
+        setImages(newImages);
+    }
+
+    const selectImage = image => setCurrentImage({ ...image })
 
     return (
         <Layout>
@@ -43,7 +65,7 @@ const MediaLibraryPage =  ({ images = [] }) => {
                         </Menu>
                     </Col>
                     <Col>
-                        <Upload />
+                        <Upload onUpload={onUpload} />
                     </Col>
                     <Col>
                         <Button>
@@ -55,10 +77,8 @@ const MediaLibraryPage =  ({ images = [] }) => {
             <Layout>
                 <Sider width={350}>
                     <Detailed
-                        title={currentImage.title}
-                        alt={currentImage.alt}
-                        displayName={currentImage.displayName}
-                        url={currentImage.url}
+                        {...currentImage}
+                        onUpdate={onUpdate}
                     />
                 </Sider>
             </Layout>
@@ -72,10 +92,12 @@ const MediaLibraryPage =  ({ images = [] }) => {
                     <Row gutter={20}>
                         {
                             images.map(image => (
-                                <Col key={image.id}>
+                                <Col key={image.url}>
                                     <Item
                                         {...image}
-                                        onClick={() => console.log('click', image) || setCurrentImage(image)}
+                                        active={image.url === currentImage.url}
+                                        onDelete={onDelete}
+                                        onClick={() => selectImage(image)}
                                     />
                                 </Col>
                             ))

@@ -9,10 +9,12 @@ const Wrapper = styled.div`
 
 export default ({ url, method, body, onSuccess }) => {
     const [errors, setErrors] = useState([]);
+    const [pending, setPending] = useState(false);
 
     const doRequest = async (props={}) => {
         try {
             setErrors(null);
+            setPending(true);
             const res = await axios[method](
                 url,
                 { ...body, ...props }
@@ -35,8 +37,10 @@ export default ({ url, method, body, onSuccess }) => {
             }
 
             setErrors(<Wrapper>{message}</Wrapper>);
+        } finally {
+            setPending(false);
         }
     }
 
-    return { doRequest, errors };
+    return { doRequest, errors, pending };
 }

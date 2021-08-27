@@ -8,5 +8,8 @@ export enum Subjects {
     ExpirationComplete = 'expiration:complete',
     TransformationCreated = 'transformation:created',
 
-    PaymentCreated = 'payment:created'
+    PaymentCreated = 'payment:created',
+
+    FileUploaded = 'file:uploaded',
+    FileRemoved = 'file:removed'
 }

@@ -5,15 +5,14 @@ import { AwsClient } from "../services/aws-client";
 const router = express.Router();
 
 // fetch a file
-router.get('/api/images/:name', requireAuth, (req: Request, res: Response) => {
-    const folder = req.currentUser!.id;
-    const fileName = req.params.name;
+router.get('/api/images/:folder/:fileName', requireAuth, (req: Request, res: Response) => {
+    const { folder, fileName } = req.params;
 
     res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${fileName}`);
 });
 
 // fetch a transformed file
-router.get('/api/images/:transformation/:name', requireAuth, (req: Request, res: Response) => {
+router.get('/api/images/transform/:transformation/:name', requireAuth, (req: Request, res: Response) => {
     const folder = req.currentUser!.id;
     const transformation = req.params.transformation;
     const fileName = req.params.name;

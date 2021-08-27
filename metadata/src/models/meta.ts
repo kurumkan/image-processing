@@ -6,7 +6,8 @@ interface MetaAttrs {
     url: string,
     title: string,
     alt: string,
-    lowsrc: string
+    lowsrc: string,
+    fileName: string
 }
 
 export interface MetaDoc extends mongoose.Document {
@@ -14,7 +15,8 @@ export interface MetaDoc extends mongoose.Document {
     url: string,
     title: string,
     alt: string,
-    lowsrc: string
+    lowsrc: string,
+    fileName: string
 }
 
 interface MetaModel extends mongoose.Model<MetaDoc> {
@@ -31,13 +33,17 @@ const metaSchema = new mongoose.Schema({
             type: String,
             required: true
         },
-        title: {
+        fileName: {
             type: String,
             required: true
         },
+        title: {
+            type: String,
+            required: false
+        },
         alt: {
             type: String,
-            required: true
+            required: false
         },
         lowsrc: {
             type: String,

@@ -16,6 +16,14 @@ spec:
         - name: storage
           image: kurumkan/storage
           env: # environment variables
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: imgproc
             - name: SPACES_URL
               value: 'ams3.digitaloceanspaces.com'
             - name: SPACES_BUCKET

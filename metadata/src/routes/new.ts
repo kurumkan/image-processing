@@ -23,11 +23,12 @@ router.post('/api/meta', requireAuth, [
     ],
     validateRequest,
     async(req: Request, res: Response) => {
-        const { userId, url, title, alt, lowsrc } = req.body;
+        const { fileName, url, title, alt, lowsrc } = req.body;
 
         const meta = Meta.build({
             url,
             title,
+            fileName,
             alt,
             lowsrc,
             userId: req.currentUser!.id
