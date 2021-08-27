@@ -21,7 +21,6 @@ const UploadComponent = ({ onUpload }) => {
                 }
             });
             message.success('File has been uploaded');
-            console.log('upload', res);
 
             onUpload({ fileName: file.name, url: resultUrl });
         } catch (e) {

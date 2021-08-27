@@ -11,7 +11,6 @@ class AwsS3 {
             accessKeyId: process.env.SPACES_KEY!,
             secretAccessKey: process.env.SPACES_SECRET!
         });
-        console.log('AWS endpoint', spacesEndpoint);
     }
 
     public deleteObject(folder:string, fileName: string, callback: (error: AWSError, data: S3.Types.DeleteObjectOutput) => void): void {

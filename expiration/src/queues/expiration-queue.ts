@@ -13,7 +13,7 @@ const expirationQueue = new Queue<Payload>('transformation:expiration', {
 });
 
 expirationQueue.process(async job => {
-    console.log('I want to publish expiration:complete event with transformationId', job.data.transformationId);
+    console.log('Expiration:complete event with id', job.data.transformationId);
     new ExpirationCompletePublisher(natsWrapper.client).publish({
         transformationId: job.data.transformationId
     });

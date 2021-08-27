@@ -112,7 +112,6 @@ const MediaLibraryPage =  ({ images: imagesProps = [] }) => {
 MediaLibraryPage.getInitialProps = async (context, client) => {
     try {
         const { data } = await client.get('/api/meta');
-        console.log('images', data);
         return { images: data };
     } catch (e) {
         console.log('Fetch images error: ', e);

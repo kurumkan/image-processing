@@ -11,7 +11,7 @@ export class FileRemovedListener extends Listener<FileRemovedEvent> {
         const { fileName } = data;
         Meta.findOneAndDelete({ fileName }, {}, (err, doc) => {
             if (err) {
-               console.log('Error deleeting', err);
+               console.log('Error deleting', err);
                return;
             }
 

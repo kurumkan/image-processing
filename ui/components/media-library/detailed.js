@@ -44,8 +44,6 @@ const Detailed = props => {
     const [ title, setTitle ] = useState('');
     const [ alt, setAlt ] = useState('');
 
-    console.log('props', props)
-
     useEffect(() => {
         setTitle(props.title);
         setAlt(props.alt);

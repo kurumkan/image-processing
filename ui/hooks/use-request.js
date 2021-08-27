@@ -23,7 +23,6 @@ export default ({ url, method, body, onSuccess }) => {
             return res.data;
         } catch(err) {
             let message;
-            console.log(err)
 
             if (err.response.data.errors) {
                  message = (
