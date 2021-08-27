@@ -1,4 +1,4 @@
-import { Card, message } from 'antd';
+import { Card, Image, message } from 'antd';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import useRequest from "../../hooks/use-request";
@@ -11,12 +11,10 @@ const Wrapper = styled.div`
   border-style: solid;
   border-color: ${props => props.active ? 'black' : 'transparent'};
 `
-const Cover = styled.img`
-  display: block;
-  margin: 0 auto;
-  width: auto;
-  max-width: 100%;
-  height: 300px;      
+const CustomCard = styled(Card)`
+  overflow: hidden;
+`
+const Cover = styled(Image)`
   cursor: pointer;
   &:hover {
     opacity: 0.7;
@@ -34,13 +32,14 @@ const Item = ({ url, alt, fileName, onClick, onDelete, active }) => {
 
     return (
         <Wrapper active={active}>
-            <Card
+            <CustomCard
                 style={{ width: 300 }}
                 cover={
                     <Cover
                         alt={alt || ''}
                         src={url}
                         onClick={onClick}
+                        preview={false}
                     />
                 }
                 actions={[
@@ -57,7 +56,7 @@ const Item = ({ url, alt, fileName, onClick, onDelete, active }) => {
                     title={fileName}
                     description={alt}
                 />
-            </Card>
+            </CustomCard>
         </Wrapper>
     )
 }
