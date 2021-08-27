@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Link from 'next/link';
+import Router from 'next/router';
 import { Col, Row, Layout, Menu, Empty, Button } from 'antd';
 import styled from 'styled-components';
 import Item from '../../../components/media-library/item';
 import Detailed from '../../../components/media-library/detailed';
 import Upload from '../../../components/media-library/upload';
+import buildClient from "../../../api/build-client";
 const { Header, Content, Sider } = Layout;
 const ContentWrapper = styled(Content)`
   margin: 74px 60px 30px 380px;
@@ -24,7 +27,11 @@ const EmptyWrapper = styled.div`
     - upload images
  */
 
-const MediaLibraryPage =  ({ images: imagesProps = [] }) => {
+const MediaLibraryPage =  ({ images: imagesProps = [], user }) => {
+    if (!user) {
+        Router.push('/auth/signin');
+    }
+
     const [currentImage, setCurrentImage] = useState({
         title: '',
         alt: '',
@@ -69,7 +76,9 @@ const MediaLibraryPage =  ({ images: imagesProps = [] }) => {
                     </Col>
                     <Col>
                         <Button>
-                            Sign out
+                            <Link href="/auth/signout">
+                                Sign out
+                            </Link>
                         </Button>
                     </Col>
                 </Row>
@@ -109,13 +118,13 @@ const MediaLibraryPage =  ({ images: imagesProps = [] }) => {
     )
 }
 
-MediaLibraryPage.getInitialProps = async (context, client) => {
+MediaLibraryPage.getInitialProps = async (context, client, user) => {
     try {
         const { data } = await client.get('/api/meta');
-        return { images: data };
+        return { images: data, user };
     } catch (e) {
         console.log('Fetch images error: ', e);
-        return { images: [] }
+        return { images: [], user }
     }
 }
 

@@ -12,6 +12,7 @@ AppComponent.getInitialProps = async context => {
         const { data } = await client.get('/api/users/currentuser');
 
         let pageProps = {};
+
         if (context.Component.getInitialProps) {
             pageProps = await context.Component.getInitialProps(context.ctx, client, data.currentUser);
         }

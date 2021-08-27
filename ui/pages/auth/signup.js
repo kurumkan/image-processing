@@ -1,13 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Router  from 'next/router';
 import Link from 'next/link';
-import { Form, Input, Button, Typography } from 'antd';
+import { Form, Input, Button, Typography, Space } from 'antd';
 import useRequest from '../../hooks/use-request';
 import { Wrapper } from '../../components/auth/wrapper';
 
 const { Title } = Typography;
 
-export default () => {
+const Signup = ({ user }) => {
+    useEffect(() => {
+        if (user) {
+            Router.push('/console/media_library');
+            return;
+        }
+    }, []);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -54,7 +61,7 @@ export default () => {
                         },
                     ]}
                 >
-                    <Input value={password} onChange={e => setPassword(e.target.value)}  />
+                    <Input.Password value={password} onChange={e => setPassword(e.target.value)}  />
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" block>
@@ -68,7 +75,16 @@ export default () => {
                         </Link>
                     </Button>
                 </Form.Item>
+                <Space>
+                    Already have an account? <Link href="/auth/signin">Sign In »</Link>
+                </Space>
             </Form>
         </Wrapper>
     );
 }
+
+Signup.getInitialProps = async (context, client, user) => {
+    return { user };
+};
+
+export default Signup;
