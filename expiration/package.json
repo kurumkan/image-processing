@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kurumkanimgproc/common": "^1.0.9",
+    "@kurumkanimgproc/common": "^1.0.20",
     "@types/bull": "^3.15.2",
     "bull": "^3.26.0",
     "node-nats-streaming": "^0.3.2",

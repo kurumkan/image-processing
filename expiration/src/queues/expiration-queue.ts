@@ -3,7 +3,8 @@ import { ExpirationCompletePublisher } from "../events/publishers/expiration-com
 import { natsWrapper } from "../nats-wrapper";
 
 interface Payload {
-    transformationId: string,
+    folder: string,
+    fileName: string
 }
 
 const expirationQueue = new Queue<Payload>('transformation:expiration', {
@@ -13,9 +14,10 @@ const expirationQueue = new Queue<Payload>('transformation:expiration', {
 });
 
 expirationQueue.process(async job => {
-    console.log('Expiration:complete event with id', job.data.transformationId);
+    console.log('Expiration:complete event with id', job.data);
     new ExpirationCompletePublisher(natsWrapper.client).publish({
-        transformationId: job.data.transformationId
+        folder: job.data.folder,
+        fileName: job.data.fileName
     });
 });
 

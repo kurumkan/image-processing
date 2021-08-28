@@ -13,7 +13,8 @@ export class TransformationCreatedListener extends Listener<TransformationCreate
         // adding a job to a queue
         await expirationQueue.add(
             {
-                transformationId: data.id
+                folder: data.folder,
+                fileName: data.fileName
             },
             {
                 delay
