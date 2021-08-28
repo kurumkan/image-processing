@@ -51,7 +51,7 @@ class AwsS3 {
         const params = {
             Bucket: bucket,
             Key: `${folder}/${fileName}`,
-            ACL: 'public-read'
+            // ACL: 'public-read'
         }
 
         this.client.headObject(params, callback);

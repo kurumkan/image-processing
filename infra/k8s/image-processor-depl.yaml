@@ -17,6 +17,8 @@ spec:
           image: kurumkan/image-processor
           env: # environment variables
             - name: REDIRECT_URL
+              value: 'https://imgproc.dev/api/images/transform/'
+            - name: STORAGE_URL
               value: 'https://imgproc-storage.ams3.digitaloceanspaces.com/'
             - name: SPACES_URL
               value: 'https://ams3.digitaloceanspaces.com'
@@ -51,7 +53,6 @@ kind: Service
 metadata:
   name: image-processor-srv
 spec:
-  type: NodePort
   selector:
     app: image-processor
   ports:

@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"github.com/gin-gonic/gin"
 	"image"
 	"image-converter/imageman"
 	"image/jpeg"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -20,24 +20,26 @@ import (
 var Client = initS3Client()
 
 func main() {
-	log.Println("Starting image-processor on port 3000:")
+	fmt.Println("Starting image-processor on port 3000")
 	router := gin.Default()
-	router.GET("/api/transform/:folder/:transformation/:fileName", processImage)
-	router.Run("0.0.0.0:3000")
+	router.GET("/api/transform/:transformation/:folder/:fileName", processImage)
+	router.Run(":3000")
 }
 
 func processImage(c *gin.Context) {
-    log.Println("Request")
-	folder := c.Param("folder")
+	fmt.Println("Request")
 	transformation := c.Param("transformation")
+	folder := c.Param("folder")
 	fileName := c.Param("fileName")
 
-	originalUrl := os.Getenv("REDIRECT_URL") + folder + "/" + fileName
+	originalUrl := os.Getenv("STORAGE_URL") + folder + "/" + fileName
+
+	fmt.Println("originalUrl", originalUrl)
 
 	img, err := imageman.Grayscale(originalUrl, true)
 
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{ "code": "PAGE_NOT_FOUND", "message": "Page not found" })
 		return
 	}
@@ -45,19 +47,22 @@ func processImage(c *gin.Context) {
 	path := folder + "/" + transformation + "_" + fileName
 	buffer := new(bytes.Buffer)
 	jpeg.Encode(buffer, img, nil)
-	err, resultUrl := uploadToCloud(path, buffer.String())
+	err = uploadToCloud(path, buffer.String())
 
 	if err != nil {
-		log.Println(err.Error())
+		fmt.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{ "code": "SERVER_ERROR", "message": "Failed to process image" })
 		return
 	}
 
-	log.Println("SUCCESS" + resultUrl)
+	resultUrl := "/api/images/transform/" + transformation + "/" + folder + "/" + fileName
+
+	fmt.Println("SUCCESS" + resultUrl)
 	c.Redirect(http.StatusMovedPermanently, resultUrl)
 }
 
 func initS3Client() *s3.S3 {
+	//SetEnv()
 	key := os.Getenv("SPACES_KEY")
 	secret := os.Getenv("SPACES_SECRET")
 	endpoint := os.Getenv("SPACES_URL")
@@ -73,7 +78,7 @@ func initS3Client() *s3.S3 {
 	return s3Client
 }
 
-func uploadToCloud(fileName string, fileContents string) (error, string) {
+func uploadToCloud(fileName string, fileContents string) error {
     bucket := os.Getenv("SPACES_BUCKET")
 	object := s3.PutObjectInput{
 		Bucket: aws.String(bucket),
@@ -88,12 +93,10 @@ func uploadToCloud(fileName string, fileContents string) (error, string) {
 	_, err := Client.PutObject(&object)
 
 	if err != nil {
-		return err, ""
+		return err
 	}
 
-	uploadUrl := os.Getenv("REDIRECT_URL") + fileName
-
-	return nil, uploadUrl
+	return nil
 }
 
 // saving to local file system
