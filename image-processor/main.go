@@ -57,7 +57,8 @@ func processImage(c *gin.Context) {
 
 	resultUrl := "/api/images/transform/" + transformation + "/" + folder + "/" + fileName
 
-	fmt.Println("SUCCESS" + resultUrl)
+	fmt.Println("SUCCESS " + resultUrl)
+	imageman.Publish(folder, transformation + "_" + fileName)
 	c.Redirect(http.StatusMovedPermanently, resultUrl)
 }
 

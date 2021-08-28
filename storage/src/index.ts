@@ -1,5 +1,6 @@
 import { app } from './app';
 import { natsWrapper } from "./nats-wrapper";
+import { ExpirationCompleteListener } from "./events/listeners/expiration-complete-listener";
 
 const PORT = 3000;
 
@@ -44,6 +45,8 @@ const start =  async () => {
     });
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    new ExpirationCompleteListener(natsWrapper.client).listen();
   } catch(err) {
     console.log(err);
   }

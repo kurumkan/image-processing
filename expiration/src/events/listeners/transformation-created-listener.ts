@@ -9,7 +9,10 @@ export class TransformationCreatedListener extends Listener<TransformationCreate
 
     async onMessage(data: TransformationCreatedEvent["data"], msg: Message) {
         const delay = new Date(data.expiresAt).getTime() - new Date().getTime();
-        console.log(`this job will be processed in ${delay} ms`)
+
+        console.log('Transformation created event received: ', data);
+        console.log(`this job will be processed in ${delay} ms`);
+
         // adding a job to a queue
         await expirationQueue.add(
             {
