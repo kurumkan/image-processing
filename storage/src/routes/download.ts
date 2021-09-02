@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import https from 'https';
 import { StorageConnectorError } from '@kurumkanimgproc/common';
 import { AwsClient } from "../services/aws-client";
 
@@ -8,7 +9,9 @@ const router = express.Router();
 router.get('/api/images/:folder/:fileName', (req: Request, res: Response) => {
     const { folder, fileName } = req.params;
 
-    res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${fileName}`);
+    https.get(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${fileName}`, (response) => {
+        response.pipe(res)
+    });
 });
 
 // fetch a transformed file
@@ -28,8 +31,10 @@ router.get('/api/images/transform/:transformation/:folder/:fileName', (req: Requ
             }
         }
       
-        console.log('transformation found, redirecting');
-        res.redirect(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${transformation}_${fileName}`);
+        console.log('transformation found');
+        https.get(`https://imgproc-storage.ams3.digitaloceanspaces.com/${folder}/${transformation}_${fileName}`, (response) => {
+            response.pipe(res)
+        });
     });
 });
 

@@ -2,13 +2,13 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"image"
 	"image-converter/imageman"
 	"image/jpeg"
-	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,13 +22,12 @@ var Client = initS3Client()
 func main() {
 	fmt.Println("Starting image-processor on port 3000")
 	router := gin.Default()
-	router.GET("/api/transform/:transformation/:folder/:fileName", processImage)
+	router.GET("/api/transform/:transformations/:folder/:fileName", processImage)
 	router.Run(":3000")
 }
 
 func processImage(c *gin.Context) {
 	fmt.Println("Request")
-	transformation := c.Param("transformation")
 	folder := c.Param("folder")
 	fileName := c.Param("fileName")
 
@@ -36,7 +35,7 @@ func processImage(c *gin.Context) {
 
 	fmt.Println("originalUrl", originalUrl)
 
-	img, err := imageman.Grayscale(originalUrl, true)
+	img, err := imageman.LoadImage(originalUrl)
 
 	if err != nil {
 		fmt.Println(err)
@@ -44,7 +43,89 @@ func processImage(c *gin.Context) {
 		return
 	}
 
-	path := folder + "/" + transformation + "_" + fileName
+	transformations := c.Param("transformations")
+	transformationList := strings.Split(transformations, ",")
+
+	for _, t := range(transformationList) {
+		if strings.Contains(t, "blur") {
+			values := strings.Split(t, ":")
+
+			if len(values) < 2 {
+				fmt.Println("Not enogugh arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				return
+			}
+
+			size, err := strconv.Atoi(values[1])
+			if err != nil {
+				fmt.Println("Blur should contain size", err, size)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Blur should contain size" })
+				return
+			}
+			img, err = imageman.Blur(img, size)
+		} else if strings.Contains(t, "brightness") {
+			values := strings.Split(t, ":")
+
+			if len(values) < 2 {
+				fmt.Println("Not enogugh arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				return
+			}
+
+			brightness, err := strconv.Atoi(values[1])
+			if err != nil {
+				fmt.Println("Provide brighntess value", err, brightness)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Provide brighntess value" })
+				return
+			}
+			img, err = imageman.Brightness(img, brightness)
+		} else if strings.Contains(t, "contrast") {
+			values := strings.Split(t, ":")
+
+			if len(values) < 2 {
+				fmt.Println("Not enogugh arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				return
+			}
+
+			contrast, err := strconv.Atoi(values[1])
+			if err != nil {
+				fmt.Println("Provide contrast value", err, contrast)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Provide contrast value" })
+				return
+			}
+			img, err = imageman.Contrast(img, contrast)
+		} else if strings.Contains(t, "grayscale") {
+			img, err = imageman.Grayscale(img)
+		} else if strings.Contains(t, "invert") {
+			img, err = imageman.Invert(img)
+		} else if strings.Contains(t, "resize") {
+			values := strings.Split(t, ":")
+			if len(values) != 3 {
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "provide height and width" })
+				return
+			}
+
+			width, err := strconv.Atoi(values[1])
+			if err != nil {
+				fmt.Println("Invalid width", err, width)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid width" })
+				return
+			}
+			height, err := strconv.Atoi(values[2])
+			if err != nil {
+				fmt.Println("Invalid height", err, height)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid height" })
+				return
+			}
+			img, err = imageman.Resize(img, width, height)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid transformation type" })
+			return
+		}
+	}
+
+	path := folder + "/" + transformations + "_" + fileName
 	buffer := new(bytes.Buffer)
 	jpeg.Encode(buffer, img, nil)
 	err = uploadToCloud(path, buffer.String())
@@ -55,15 +136,14 @@ func processImage(c *gin.Context) {
 		return
 	}
 
-	resultUrl := "/api/images/transform/" + transformation + "/" + folder + "/" + fileName
+	resultUrl := "/api/images/transform/" + transformations + "/" + folder + "/" + fileName
 
 	fmt.Println("SUCCESS " + resultUrl)
-	imageman.Publish(folder, transformation + "_" + fileName)
-	c.Redirect(http.StatusMovedPermanently, resultUrl)
+	imageman.Publish(folder, transformations + "_" + fileName)
+	c.Data(http.StatusCreated, "image/jpeg", buffer.Bytes())
 }
 
 func initS3Client() *s3.S3 {
-	//SetEnv()
 	key := os.Getenv("SPACES_KEY")
 	secret := os.Getenv("SPACES_SECRET")
 	endpoint := os.Getenv("SPACES_URL")
@@ -98,21 +178,4 @@ func uploadToCloud(fileName string, fileContents string) error {
 	}
 
 	return nil
-}
-
-// saving to local file system
-func SaveJPG(img image.Image, path string) (error, string) {
-	f, err := os.Create(path)
-	if err != nil {
-		return err, path
-	}
-	defer f.Close()
-	if err := jpeg.Encode(f, img, nil); err != nil {
-		return err, path
-	}
-	if err := f.Close(); err != nil {
-		return err, path
-	}
-
-	return nil, path
 }

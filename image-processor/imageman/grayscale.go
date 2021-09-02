@@ -6,13 +6,7 @@ import (
 	"image/draw"
 )
 
-func Grayscale(path string, keepRatio bool) (image.Image, error) {
-	img, err := loadImage(path)
-
-	if err != nil {
-		return nil, err
-	}
-
+func Grayscale(img image.Image) (image.Image, error) {
 	result := image.NewRGBA(image.Rect(img.Bounds().Min.X, img.Bounds().Min.Y, img.Bounds().Max.X, img.Bounds().Max.Y))
 
 	minX := img.Bounds().Min.X;

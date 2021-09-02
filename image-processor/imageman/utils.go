@@ -6,7 +6,7 @@ import (
 )
 
 // load image from url
-func loadImage(path string) (image.Image, error) {
+func LoadImage(path string) (image.Image, error) {
 	resp, err := http.Get(path)
 	if err != nil {
 		return nil, err
