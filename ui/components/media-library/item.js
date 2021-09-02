@@ -6,16 +6,20 @@ import useRequest from "../../hooks/use-request";
 const { Meta } = Card;
 
 const Wrapper = styled.div`
-  margin-bottom: 10px;
   border-width: 1px;
   border-style: solid;
   border-color: ${props => props.active ? 'black' : 'transparent'};
+  margin-bottom: 15px;
 `
 const CustomCard = styled(Card)`
   overflow: hidden;
+  height: 100%;
 `
 const Cover = styled(Image)`
   cursor: pointer;
+  height: 300px;
+  width: auto;
+  margin: 0 auto;
   &:hover {
     opacity: 0.7;
   }
