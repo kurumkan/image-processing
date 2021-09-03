@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import Link from 'next/link';
 import Router from 'next/router';
-import { Col, Row, Layout, Menu, Empty, Button } from 'antd';
+import { Col, Row, Layout, Empty } from 'antd';
 import styled from 'styled-components';
 import Item from '../../../components/media-library/item';
 import Detailed from '../../../components/media-library/detailed';
-import Upload from '../../../components/media-library/upload';
-import buildClient from "../../../api/build-client";
-const { Header, Content, Sider } = Layout;
+import Header from '../../../components/media-library/header';
+
+const { Content, Sider } = Layout;
+
 const ContentWrapper = styled(Content)`
   margin: 74px 60px 30px 380px;
 `
@@ -63,26 +63,7 @@ const MediaLibraryPage =  ({ images: imagesProps = [], user }) => {
 
     return (
         <Layout>
-            <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-                <Row justify="space-between">
-                    <Col>
-                        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
-                            <Menu.Item key={0}>Library</Menu.Item>
-                            <Menu.Item key={1}>Transformations</Menu.Item>
-                        </Menu>
-                    </Col>
-                    <Col>
-                        <Upload onUpload={onUpload} />
-                    </Col>
-                    <Col>
-                        <Button>
-                            <Link href="/auth/signout">
-                                Sign out
-                            </Link>
-                        </Button>
-                    </Col>
-                </Row>
-            </Header>
+            <Header onUpload={onUpload} showUpload active="0" />
             <Layout>
                 <Sider width={350}>
                     <Detailed
