@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Card, Image, message } from 'antd';
-import { EditOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CopyOutlined, CheckOutlined, EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import copy from 'copy-to-clipboard';
 import useRequest from "../../hooks/use-request";
 
 const { Meta } = Card;
@@ -25,6 +27,8 @@ const Cover = styled(Image)`
   }
 `
 const Item = ({ url, alt, fileName, onClick, onDelete, active }) => {
+    const [showTick, setShowTick] = useState(false);
+
     const { doRequest, pending } = useRequest({
         url: `/api/images/${fileName}`,
         method: 'delete',
@@ -33,6 +37,12 @@ const Item = ({ url, alt, fileName, onClick, onDelete, active }) => {
             message.success('Image deleted')
         }
     });
+
+    const onCopyClick = () => {
+        copy(`${location.origin}${url}`);
+        setShowTick(true);
+        setTimeout(() => setShowTick(false), 3000);
+    }
 
     return (
         <Wrapper active={active}>
@@ -47,7 +57,16 @@ const Item = ({ url, alt, fileName, onClick, onDelete, active }) => {
                     />
                 }
                 actions={[
-                    <EditOutlined key="edit" />,
+                    showTick ? (
+                        <CheckOutlined
+                            key="check"
+                        />
+                    ) : (
+                        <CopyOutlined
+                            key="copy"
+                            onClick={onCopyClick}
+                        />
+                    ),
                     <DeleteOutlined
                         loading={pending}
                         key="delete"
