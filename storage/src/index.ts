@@ -5,7 +5,7 @@ import { ExpirationCompleteListener } from "./events/listeners/expiration-comple
 const PORT = 3000;
 
 const start =  async () => {
-  console.log('starting storage service')
+  console.log('Starting storage service');
 
   if(!process.env.SPACES_URL) {
     throw new Error("SPACES_URL must be defined");
