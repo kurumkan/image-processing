@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Layout, Image, InputNumber, Input, Typography, Form, Button, Space, Select } from "antd";
+import {
+    Layout,
+    Image,
+    InputNumber,
+    Input,
+    Typography,
+    Form,
+    Button,
+    Space,
+    Select,
+    Spin
+} from "antd";
 import styled from 'styled-components';
 import Header from '../../../components/media-library/header';
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
@@ -34,6 +45,15 @@ const selectOptions = [
 
 const CustomSpace = styled(Space)`
   display: flex;
+`
+const SpinnerWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  opacity: 75%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const FormRow = ({ field, remove, options }) => {
@@ -186,7 +206,6 @@ const Transformations = props => {
 
     const onFinish = values => {
         const query = values.list.reduce((acc, { type, value, width, height }) => {
-            console.log('asd', value, width, height)
             if (width && height) {
                 return `${acc},${type}:${width}:${height}`;
             }
@@ -206,7 +225,7 @@ const Transformations = props => {
             const start = url.indexOf('/images/') + 8;
             result = url.slice(0, start) + "transform/" + query.slice(1) + "/" + url.slice(start);
         }
-
+        console.log('resultUrl', result);
         setUrl(result);
     }
 
@@ -226,6 +245,11 @@ const Transformations = props => {
                 <Image
                     preview={false}
                     src={url}
+                    placeholder={
+                        <SpinnerWrapper>
+                            <Spin size="large" />
+                        </SpinnerWrapper>
+                    }
                 />
                 <Code>
                     <Text code copyable>

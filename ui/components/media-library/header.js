@@ -5,7 +5,6 @@ import Upload from "./upload";
 const { Header } = Layout;
 
 export default props => {
-    console.log(props)
     return (
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
             <Row justify="space-between">
