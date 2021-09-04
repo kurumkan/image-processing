@@ -5,11 +5,12 @@ const createMeta = (user: [string]) => {
     const url = 'https://example.com';
     const title = 'some title';
     const alt = 'some alt';
+    const fileName = 'image.jpg';
 
     return request(app)
         .post('/api/meta')
         .set('Cookie', user)
-        .send({ url, title, alt })
+        .send({ url, title, alt, fileName })
         .expect(201);
 };
 

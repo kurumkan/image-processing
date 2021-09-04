@@ -1,7 +1,6 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { app } from '../../app';
-import { Meta } from "../../models/meta";
 
 it('returns 404 if meta not found', async () => {
     const id = new mongoose.Types.ObjectId().toHexString();
@@ -25,6 +24,7 @@ it('returns 401 if not authenticated', async () => {
 
 
 it('returns 401 if user is not the owner', async () => {
+    const fileName = 'image.jpeg';
     const createRequest = await request(app)
         .post('/api/meta')
         // @ts-ignore
@@ -32,12 +32,13 @@ it('returns 401 if user is not the owner', async () => {
         .send({
             title: 'some title',
             alt: 'some alt',
-            url: 'https://example.com'
+            url: 'https://example.com',
+            fileName
         })
         .expect(201);
 
     await request(app)
-        .put(`/api/meta/${createRequest.body.id}`)
+        .put(`/api/meta/${fileName}`)
         // @ts-ignore
         .set('Cookie', global.signin())
         .send({ title: 'new title' })
@@ -48,18 +49,20 @@ it('returns 401 if user is not the owner', async () => {
 it('returns 400 if invalid data', async () => {
     // @ts-ignore
     const cookie = global.signin();
+    const fileName = 'image.jpeg';
     const createRequest = await request(app)
         .post('/api/meta')
         .set('Cookie', cookie)
         .send({
             title: 'some title',
             alt: 'some alt',
-            url: 'https://example.com'
+            url: 'https://example.com',
+            fileName
         })
         .expect(201);
 
     await request(app)
-        .put(`/api/meta/${createRequest.body.id}`)
+        .put(`/api/meta/${fileName}`)
         .set('Cookie', cookie)
         .send({})
         .expect(400);
@@ -74,18 +77,20 @@ it('returns 400 if invalid data', async () => {
 it('updates meta', async () => {
     // @ts-ignore
     const cookie = global.signin();
+    const fileName = 'image.jpeg';
     const createRequest = await request(app)
         .post('/api/meta')
         .set('Cookie', cookie)
         .send({
             title: 'some title',
             alt: 'some alt',
-            url: 'https://example.com'
+            url: 'https://example.com',
+            fileName
         })
         .expect(201);
 
     await request(app)
-        .put(`/api/meta/${createRequest.body.id}`)
+        .put(`/api/meta/${fileName}`)
         .set('Cookie', cookie)
         .send({
             title: 'new_title',

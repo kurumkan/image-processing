@@ -15,12 +15,13 @@ it('returns meta', async () => {
     const title = 'some title';
     const alt = 'some alt';
     const url = 'https://example.com';
+    const fileName = 'iamge.jpeg';
 
     const response = await request(app)
         .post('/api/meta')
         // @ts-ignore
         .set('Cookie', global.signin())
-        .send({ title, url, alt })
+        .send({ title, url, alt, fileName })
         .expect(201);
 
     const metaResponse = await request(app)

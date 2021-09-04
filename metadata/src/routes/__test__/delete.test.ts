@@ -3,6 +3,7 @@ import { app } from '../../app';
 
 it('delete metadata',async () => {
     const body = {
+        fileName: 'image.jpg',
         url: 'https://example.com',
         title: 'some title',
         alt: 'some alt'

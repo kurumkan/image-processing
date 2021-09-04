@@ -37,6 +37,7 @@ it('returns error if invalid missing inputs', async () => {
         .send({
             url: 'https://example.com',
             title: 'some title',
+            fileName: 'image.jpeg',
             alt: ''
         })
         .expect(400);
@@ -46,6 +47,7 @@ it('returns error if invalid missing inputs', async () => {
         .set('Cookie', user)
         .send({
             url: '',
+            fileName: 'image.jpeg',
             title: 'some title',
             alt: 'some alt'
         })
@@ -59,6 +61,7 @@ it('returns an error if invalid url is provided', async () => {
         .set('Cookie', global.signin())
         .send({
             url: 'not_a_url',
+            fileName: 'image.jpeg',
             title: 'some title',
             alt: 'some alt'
         })
@@ -71,13 +74,14 @@ it('creates a metadata item', async () => {
 
     const url = 'https://exmaple.com';
     const title = 'some title';
-    const alt = 'some alt'
+    const alt = 'some alt';
+    const fileName = 'iamge.jpeg';
 
     await request(app)
         .post('/api/meta')
         // @ts-ignore
         .set('Cookie', global.signin())
-        .send({ title, url, alt })
+        .send({ title, url, alt, fileName })
         .expect(201);
 
     metadataItems = await Meta.find({});
