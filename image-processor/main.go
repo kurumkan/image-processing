@@ -20,7 +20,7 @@ import (
 var Client = initS3Client()
 
 func main() {
-	fmt.Println("Starting image-processor on port 3000")
+	fmt.Println("Starting image-processor")
 	router := gin.Default()
 	router.GET("/api/transform/:transformations/:folder/:fileName", processImage)
 	router.Run(":3000")
