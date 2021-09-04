@@ -7,7 +7,7 @@ import { FileRemovedListener } from "./events/listeners/file-removed-listener";
 const PORT = 3000;
 
 const start = async () => {
-  console.log('starting metadata service');
+  console.log('Starting metadata service');
 
   if(!process.env.JWT_KEY) {
     throw new Error("JWT_KEY must be defined");
