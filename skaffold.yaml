@@ -12,7 +12,7 @@ build:
     - image: kurumkan/authentication
       context: auth
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -20,7 +20,7 @@ build:
     - image: kurumkan/storage
       context: storage
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -28,7 +28,7 @@ build:
     - image: kurumkan/expiration
       context: expiration
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -36,7 +36,7 @@ build:
     - image: kurumkan/image-processor
       context: image-processor
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: './**/*.go'
@@ -44,7 +44,7 @@ build:
     - image: kurumkan/metadata
       context: metadata
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -52,7 +52,7 @@ build:
     - image: kurumkan/ui
       context: ui
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile-dev
       sync:
         manual:
           - src: '**/*.js'

@@ -5,3 +5,4 @@ ui/mock-server.js
 image-processor/env-vars.go
 image-processor/*.exe
 image-processor/runnable
+build/
