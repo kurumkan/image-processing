@@ -1,4 +1,4 @@
-FROM node:alpine as ts-compiler
+FROM node:alpine
 
 WORKDIR /app
 COPY package.json .
@@ -9,5 +9,3 @@ RUN npm run build
 COPY . .
 USER 1000
 CMD ["npm", "start"]
-
-
