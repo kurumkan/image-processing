@@ -11,12 +11,28 @@ spec:
       http:
         paths:
           - path: /api/users/?(.*)
+            pathType: Prefix
             backend:
               serviceName: auth-srv
               servicePort: 3000
           - path: /api/images/?(.*)
+            pathType: Prefix
             backend:
               serviceName: storage-srv
+              servicePort: 3000
+          - path: /api/transform/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: image-processor-srv
+              servicePort: 3000
+          - path: /api/meta/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: metadata-srv
+              servicePort: 3000
+          - path: /?(.*)
+            backend:
+              serviceName: ui-srv
               servicePort: 3000
 ---
 apiVersion: v1
