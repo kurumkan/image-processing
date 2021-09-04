@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { app } from '../../app';
 
 it('returns 404 if meta not found', async () => {
+    // @ts-ignore
     const id = new mongoose.Types.ObjectId().toHexString();
 
     await request(app)
@@ -14,6 +15,7 @@ it('returns 404 if meta not found', async () => {
 });
 
 it('returns 401 if not authenticated', async () => {
+    // @ts-ignore
     const id = new mongoose.Types.ObjectId().toHexString();
 
     await request(app)
