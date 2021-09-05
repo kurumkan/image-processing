@@ -14,6 +14,10 @@ func Resize(img image.Image, width int, height int) (image.Image, error) {
 	minY := img.Bounds().Min.Y
 	maxY := img.Bounds().Max.Y
 
+	if width == maxX && height == maxY {
+	    return img, nil
+	}
+
 	result := image.NewRGBA(image.Rect(minX, minY, minX + width, minY + height))
 
 	xResizeRate := float64(maxX - minX) / float64(width)

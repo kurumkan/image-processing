@@ -51,8 +51,8 @@ func processImage(c *gin.Context) {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
-				fmt.Println("Not enogugh arguments", err)
-				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				fmt.Println("Not enough arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enough arguments" })
 				return
 			}
 
@@ -62,13 +62,14 @@ func processImage(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{ "message": "Blur should contain size" })
 				return
 			}
+
 			img, err = imageman.Blur(img, size)
 		} else if strings.Contains(t, "brightness") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
-				fmt.Println("Not enogugh arguments", err)
-				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				fmt.Println("Not enough arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enough arguments" })
 				return
 			}
 
@@ -78,13 +79,14 @@ func processImage(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{ "message": "Provide brighntess value" })
 				return
 			}
+
 			img, err = imageman.Brightness(img, brightness)
 		} else if strings.Contains(t, "contrast") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
-				fmt.Println("Not enogugh arguments", err)
-				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enogugh arguments" })
+				fmt.Println("Not enough arguments", err)
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "Not enough arguments" })
 				return
 			}
 
@@ -94,6 +96,7 @@ func processImage(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{ "message": "Provide contrast value" })
 				return
 			}
+
 			img, err = imageman.Contrast(img, contrast)
 		} else if strings.Contains(t, "grayscale") {
 			img, err = imageman.Grayscale(img)

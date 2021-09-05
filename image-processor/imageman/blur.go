@@ -13,6 +13,10 @@ func Blur(img image.Image, size int) (image.Image, error) {
 	minY := img.Bounds().Min.Y
 	maxY := img.Bounds().Max.Y
 
+	if size == 0 {
+	    return img, nil
+	}
+
 	result := image.NewRGBA(image.Rect(minX, minY, maxX, maxY))
 
 	for y := minY; y < maxY; y += size  {

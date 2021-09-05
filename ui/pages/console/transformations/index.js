@@ -283,10 +283,10 @@ const Transformations = props => {
         console.log('onFinish', values, imgRef);
         if (values.list && values.list.length > 0) {
             const query = values.list.reduce((acc, { type, value, width, height }) => {
-                if (width && height) {
+                if (width !== undefined && height !== undefined) {
                     return `${acc},${type}:${width}:${height}`;
                 }
-                if (value) {
+                if (value !== undefined) {
                     return `${acc},${type}:${value}`;
                 }
                 return `${acc},${type}`
