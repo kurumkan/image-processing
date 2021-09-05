@@ -229,7 +229,8 @@ const Transformations = props => {
     const [url, setUrl] = useState('');
 
     const onFinish = values => {
-        if (values.list) {
+        console.log('onFinish', values);
+        if (values.list && values.list.length > 0) {
             const query = values.list.reduce((acc, { type, value, width, height }) => {
                 if (width && height) {
                     return `${acc},${type}:${width}:${height}`;
