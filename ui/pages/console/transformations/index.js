@@ -190,7 +190,7 @@ const FormRow = ({ field, remove, options, imgRef }) => {
                     >
                         <InputNumber
                             style={{ width: 120 }}
-                            min={0}
+                            min={1}
                             max={1000}
                             formatter={val => `${val}px`}
                             parser={value => {
@@ -209,7 +209,7 @@ const FormRow = ({ field, remove, options, imgRef }) => {
                     >
                         <InputNumber
                             style={{ width: 120 }}
-                            min={0}
+                            min={1}
                             max={1000}
                             formatter={val => `${val}px`}
                             parser={value => {

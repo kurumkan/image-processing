@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"image/draw"
 	"math"
+	"fmt"
 )
 
 func Brightness(img image.Image, brightness int) (image.Image, error) {
@@ -16,6 +17,10 @@ func Brightness(img image.Image, brightness int) (image.Image, error) {
 	if brightness == 0 {
 	    return img, nil
 	}
+
+	if brightness < -100 || brightness > 100 {
+        return nil, fmt.Errorf("Invalid brightness %d", brightness)
+    }
 
 	result := image.NewRGBA(image.Rect(minX, minY, maxX, maxY))
 
