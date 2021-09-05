@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"image/draw"
 	"math"
+	"fmt"
 )
 
 func Blur(img image.Image, size int) (image.Image, error) {
@@ -12,6 +13,14 @@ func Blur(img image.Image, size int) (image.Image, error) {
 	maxX := img.Bounds().Max.X
 	minY := img.Bounds().Min.Y
 	maxY := img.Bounds().Max.Y
+
+	if size == 0 {
+	    return img, nil
+	}
+
+	if size < 0 {
+	    return nil, fmt.Errorf("Invalid blur size %d", size)
+	}
 
 	result := image.NewRGBA(image.Rect(minX, minY, maxX, maxY))
 

@@ -88,7 +88,7 @@ const LandingPage = () => {
                     </Col>
                     <Col xs={24} md={12}>
                         <Image
-                            src="https://i.picsum.photos/id/188/536/354.jpg?hmac=o3z5jt461cqrakGUJR34etbdfE12X5peOIQHb0Ke9n0"
+                            src="/demo.jpg"
                             preview={false}
                             alt="demo image"
                         />

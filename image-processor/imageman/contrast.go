@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"fmt"
 )
 
 func Contrast(img image.Image, contrast int) (image.Image, error) {
@@ -11,6 +12,14 @@ func Contrast(img image.Image, contrast int) (image.Image, error) {
 	maxX := img.Bounds().Max.X
 	minY := img.Bounds().Min.Y
 	maxY := img.Bounds().Max.Y
+
+    if contrast == 0 {
+        return img, nil
+    }
+
+    if contrast < -100 || contrast > 100 {
+        return nil, fmt.Errorf("Invalid contrast %d", contrast)
+    }
 
 	result := image.NewRGBA(image.Rect(minX, minY, maxX, maxY))
 
