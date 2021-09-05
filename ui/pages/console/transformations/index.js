@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
     Layout,
     Image,
@@ -69,8 +69,10 @@ const ImageWrapper = styled.div`
   background: #fff;
 `;
 
-const CustomImage = styled(Image)`
-    
+const ImgRefHolder = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const selectOptions = [
@@ -82,10 +84,9 @@ const selectOptions = [
     'resize' // 2 arguments
 ];
 
-const FormRow = ({ field, remove, options }) => {
+const FormRow = ({ field, remove, options, imgRef }) => {
     const [valueField, setValueField] = useState(null);
     const [width, setWidth] = useState(470);
-    console.log(field)
 
     const getValueField = val => {
         let result = null;
@@ -100,9 +101,17 @@ const FormRow = ({ field, remove, options }) => {
                         name={[field.name, 'value']}
                         fieldKey={[field.fieldKey, 'value']}
                         rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={0}
                     >
                         <InputNumber
                             style={{ width: 200 }}
+                            min={0}
+                            max={Math.min(imgRef.current.clientWidth, imgRef.current.clientHeight)}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
                         />
                     </Form.Item>
                 );
@@ -117,9 +126,17 @@ const FormRow = ({ field, remove, options }) => {
                         name={[field.name, 'value']}
                         fieldKey={[field.fieldKey, 'value']}
                         rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={0}
                     >
                         <InputNumber
                             style={{ width: 200 }}
+                            min={-100}
+                            max={100}
+                            formatter={val => `${val}%`}
+                            parser={value => {
+                                const str = value.replace('%', '');
+                                return Math.floor(parseFloat(str));
+                            }}
                         />
                     </Form.Item>
                 );
@@ -134,9 +151,17 @@ const FormRow = ({ field, remove, options }) => {
                         name={[field.name, 'value']}
                         fieldKey={[field.fieldKey, 'value']}
                         rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={0}
                     >
                         <InputNumber
                             style={{ width: 200 }}
+                            min={-100}
+                            max={100}
+                            formatter={val => `${val}%`}
+                            parser={value => {
+                                const str = value.replace('%', '');
+                                return Math.floor(parseFloat(str));
+                            }}
                         />
                     </Form.Item>
                 );
@@ -161,9 +186,17 @@ const FormRow = ({ field, remove, options }) => {
                         name={[field.name, 'width']}
                         fieldKey={[field.fieldKey, 'width']}
                         rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={imgRef.current.clientWidth}
                     >
                         <InputNumber
                             style={{ width: 120 }}
+                            min={0}
+                            max={1000}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
                         />
                     </Form.Item>,
                     <Form.Item
@@ -172,9 +205,17 @@ const FormRow = ({ field, remove, options }) => {
                         name={[field.name, 'height']}
                         fieldKey={[field.fieldKey, 'height']}
                         rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={imgRef.current.clientHeight}
                     >
                         <InputNumber
                             style={{ width: 120 }}
+                            min={0}
+                            max={1000}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
                         />
                     </Form.Item>
                 ];
@@ -196,7 +237,7 @@ const FormRow = ({ field, remove, options }) => {
             <Form.Item
                 noStyle
                 shouldUpdate={(prevValues, curValues) =>
-                    prevValues.list !== curValues.list
+                    prevValues.list.length !== curValues.list.length
                 }
             >
                 {() => (
@@ -217,7 +258,14 @@ const FormRow = ({ field, remove, options }) => {
                     </Form.Item>
                 )}
             </Form.Item>
-            { valueField }
+            <Form.Item
+                noStyle
+                shouldUpdate={(prevValues, curValues) =>
+                    prevValues.list.length !== curValues.list.length
+                }
+            >
+                { valueField }
+            </Form.Item>
             <MinusCircleOutlined onClick={() => remove(field.name)} />
         </CustomSpace>
     )
@@ -228,8 +276,11 @@ const defaultUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeCAYAAA
 const Transformations = props => {
     const [url, setUrl] = useState('');
 
+    const [form] = Form.useForm();
+    const imgRef = useRef();
+
     const onFinish = values => {
-        console.log('onFinish', values);
+        console.log('onFinish', values, imgRef);
         if (values.list && values.list.length > 0) {
             const query = values.list.reduce((acc, { type, value, width, height }) => {
                 if (width && height) {
@@ -266,24 +317,24 @@ const Transformations = props => {
         return result;
     }
 
-    const [form] = Form.useForm();
-
     return (
         <Container>
             <Header active="1" />
             <CustomSider width="35%">
                 <ImageWrapper>
-                    <CustomImage
-                        loading
-                        preview={false}
-                        src={url || defaultUrl}
-                        fallback="https://imgproc-storage.ams3.digitaloceanspaces.com/404.jpeg"
-                        placeholder={
-                            <SpinnerWrapper>
-                                <Spin size="large" />
-                            </SpinnerWrapper>
-                        }
-                    />
+                    <ImgRefHolder ref={imgRef}>
+                        <Image
+                            loading
+                            preview={false}
+                            src={url || defaultUrl}
+                            fallback="https://imgproc-storage.ams3.digitaloceanspaces.com/404.jpeg"
+                            placeholder={
+                                <SpinnerWrapper>
+                                    <Spin size="large" />
+                                </SpinnerWrapper>
+                            }
+                        />
+                    </ImgRefHolder>
                 </ImageWrapper>
                 <If condition={!!url}>
                     <Code>
@@ -299,6 +350,7 @@ const Transformations = props => {
                         form={form}
                         name="transformations"
                         onFinish={onFinish}
+                        onValuesChange={(current, all) => console.log('onchange', current, all)}
                         autoComplete="off"
                     >
                         <Form.Item
@@ -312,7 +364,7 @@ const Transformations = props => {
                             <Input style={{ width: 440 }} />
                         </Form.Item>
                         <Form.List name="list">
-                            {(fields, { add, remove}) => (
+                            {(fields, { add, remove }) => (
                                 <>
                                     {fields.map(field => (
                                       <FormRow
@@ -320,6 +372,7 @@ const Transformations = props => {
                                           field={field}
                                           remove={remove}
                                           options={getOptions()}
+                                          imgRef={imgRef}
                                       />
                                     ))}
                                     <Form.Item>
