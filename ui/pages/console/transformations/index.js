@@ -30,9 +30,11 @@ const CustomContent = styled(Content)`
   width: 600px;
 `
 const CustomSider = styled(Sider)`
-  margin-top: 64px;
-  margin-left: 10px;
+  margin-top: 70px;
+  padding-left: 10px;
   background: transparent;
+  display: flex;
+  justify-content: center;
 `;
 
 const Code = styled.div`
@@ -45,8 +47,8 @@ const CustomSpace = styled(Space)`
 `;
 
 const SpinnerWrapper = styled.div`
-  min-width: 300px;
-  min-height: 300px;
+  min-width: 350px;
+  min-height: 350px;
   width: 100%;
   height: 100%;
   opacity: 75%;
@@ -56,8 +58,19 @@ const SpinnerWrapper = styled.div`
   justify-content: center;
 `;
 
-const CustomImage = styled(Image)`
+const ImageWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 350px;
+  min-height: 350px;
+  border: 1px solid #d9d9d9;
+  padding: 5px;
+  background: #fff;
+`;
+
+const CustomImage = styled(Image)`
+    
 `;
 
 const selectOptions = [
@@ -210,7 +223,7 @@ const FormRow = ({ field, remove, options }) => {
     )
 }
 
-const defaultUrl = 'data:image/png;base64,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';
+const defaultUrl = 'data:image/png;base64,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';
 
 const Transformations = props => {
     const [url, setUrl] = useState('');
@@ -258,16 +271,19 @@ const Transformations = props => {
         <Container>
             <Header active="1" />
             <CustomSider width="35%">
-                <CustomImage
-                    preview={false}
-                    src={url || defaultUrl}
-                    fallback="https://imgproc-storage.ams3.digitaloceanspaces.com/404.jpeg"
-                    placeholder={
-                        <SpinnerWrapper>
-                            <Spin size="large" />
-                        </SpinnerWrapper>
-                    }
-                />
+                <ImageWrapper>
+                    <CustomImage
+                        loading
+                        preview={false}
+                        src={url || defaultUrl}
+                        fallback="https://imgproc-storage.ams3.digitaloceanspaces.com/404.jpeg"
+                        placeholder={
+                            <SpinnerWrapper>
+                                <Spin size="large" />
+                            </SpinnerWrapper>
+                        }
+                    />
+                </ImageWrapper>
                 <If condition={!!url}>
                     <Code>
                         <Text code copyable>
