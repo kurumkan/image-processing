@@ -136,7 +136,24 @@ func processImage(c *gin.Context) {
 			}
 
 			img, err = imageman.Flip(img, direction)
-		} else {
+		} else if strings.Contains(t, "border") {
+            values := strings.Split(t, ":")
+            if len(values) != 3 {
+                c.JSON(http.StatusBadRequest, gin.H{ "message": "provide border color and width" })
+                return
+            }
+
+            borderWidth, err := strconv.Atoi(values[1])
+            if err != nil {
+                fmt.Println("Invalid width", err, borderWidth)
+                c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid width" })
+                return
+            }
+
+            borderColor := values[2]
+
+            img, err = imageman.Border(img, borderWidth, borderColor)
+        } else {
 			c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid transformation type" })
 			return
 		}
