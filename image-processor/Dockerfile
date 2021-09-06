@@ -1,4 +1,4 @@
-FROM gocv
+FROM kurumkan-gocv
 
 WORKDIR /app
 COPY go.mod .
