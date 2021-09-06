@@ -47,8 +47,6 @@ const CustomSpace = styled(Space)`
 `;
 
 const SpinnerWrapper = styled.div`
-  min-width: 350px;
-  min-height: 350px;
   width: 100%;
   height: 100%;
   opacity: 75%;
@@ -81,7 +79,11 @@ const selectOptions = [
     'contrast', // 1 argument
     'grayscale', // 0 arguments
     'invert', // 0 arguments
-    'resize' // 2 arguments
+    'resize', // 2 arguments,
+    'blur-face', // 0 arguments
+    'border', // 2 arguments
+    'crop-face', // 0 or 2 arguments
+    'flip', // 1 argument
 ];
 
 const FormRow = ({ field, remove, options, imgRef }) => {
@@ -167,6 +169,33 @@ const FormRow = ({ field, remove, options, imgRef }) => {
                 );
                 break;
             }
+            case 'flip': {
+                resultWidth = 200;
+                result = (
+                    <Form.Item
+                        {...field}
+                        label="Direction"
+                        name={[field.name, 'value']}
+                        fieldKey={[field.fieldKey, 'value']}
+                        rules={[{ required: true, message: 'Missing value' }]}
+                    >
+                        <Select style={{ width: 200 }}>
+                            <Select.Option value="vertical">
+                                Vertical
+                            </Select.Option>
+                            <Select.Option value="horizontal">
+                                Horizontal
+                            </Select.Option>
+                        </Select>
+                    </Form.Item>
+                );
+                break;
+            }
+            case 'blur-face': {
+                resultWidth = 470;
+                result = null;
+                break;
+            }
             case 'grayscale': {
                 resultWidth = 470;
                 result = null;
@@ -217,6 +246,86 @@ const FormRow = ({ field, remove, options, imgRef }) => {
                                 return Math.floor(parseFloat(str));
                             }}
                         />
+                    </Form.Item>
+                ];
+                break;
+            }
+            case 'crop-face': {
+                resultWidth = 120;
+                result = [
+                    <Form.Item
+                        {...field}
+                        label="Width"
+                        name={[field.name, 'width']}
+                        fieldKey={[field.fieldKey, 'width']}
+                        initialValue={0}
+                    >
+                        <InputNumber
+                            style={{ width: 120 }}
+                            min={0}
+                            max={1000}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
+                        />
+                    </Form.Item>,
+                    <Form.Item
+                        {...field}
+                        label="Height"
+                        name={[field.name, 'height']}
+                        fieldKey={[field.fieldKey, 'height']}
+                        initialValue={0}
+                    >
+                        <InputNumber
+                            style={{ width: 120 }}
+                            min={0}
+                            max={1000}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
+                        />
+                    </Form.Item>
+                ];
+                break;
+            }
+            case 'border': {
+                resultWidth = 120;
+                result = [
+                    <Form.Item
+                        {...field}
+                        label="Width"
+                        name={[field.name, 'width']}
+                        fieldKey={[field.fieldKey, 'width']}
+                        rules={[{ required: true, message: 'Missing value' }]}
+                        initialValue={0}
+                    >
+                        <InputNumber
+                            style={{ width: 120 }}
+                            min={0}
+                            max={Math.min(imgRef.current.clientWidth, imgRef.current.clientHeight)}
+                            formatter={val => `${val}px`}
+                            parser={value => {
+                                const str = value.replace('px', '');
+                                return Math.floor(parseFloat(str));
+                            }}
+                        />
+                    </Form.Item>,
+                    <Form.Item
+                        {...field}
+                        label="Color"
+                        name={[field.name, 'color']}
+                        fieldKey={[field.fieldKey, 'color']}
+                        rules={[
+                            { required: true, message: 'Missing value' },
+                            { message: 'Should be rgb hex color', pattern: /^#(?:[0-9a-fA-F]{3}){1,2}$/ }
+                        ]}
+                        initialValue={""}
+                    >
+                        <Input style={{ width: 120 }} />
                     </Form.Item>
                 ];
                 break;
@@ -282,9 +391,12 @@ const Transformations = props => {
     const onFinish = values => {
         console.log('onFinish', values, imgRef);
         if (values.list && values.list.length > 0) {
-            const query = values.list.reduce((acc, { type, value, width, height }) => {
+            const query = values.list.reduce((acc, { type, value, width, height, color }) => {
                 if (width !== undefined && height !== undefined) {
                     return `${acc},${type}:${width}:${height}`;
+                }
+                if (width !== undefined && color !== undefined) {
+                    return `${acc},${type}:${width}:${color.slice(1)}`;
                 }
                 if (value !== undefined) {
                     return `${acc},${type}:${value}`;
