@@ -66,6 +66,25 @@ func processImage(c *gin.Context) {
 			img, err = imageman.Blur(img, size)
 		}  else if strings.Contains(t, "blur-face") {
             img, err = imageman.BlurFace(img)
+        } else if strings.Contains(t, "crop-face") {
+            values := strings.Split(t, ":")
+            if len(values) == 3 {
+                width, err := strconv.Atoi(values[1])
+                if err != nil {
+                    fmt.Println("Invalid width", err, width)
+                    c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid width" })
+                    return
+                }
+                height, err := strconv.Atoi(values[2])
+                if err != nil {
+                    fmt.Println("Invalid height", err, height)
+                    c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid height" })
+                    return
+                }
+                img, err = imageman.CropFace(img, width, height)
+            } else {
+                img, err = imageman.CropFace(img, 0, 0)
+            }
         } else if strings.Contains(t, "brightness") {
 			values := strings.Split(t, ":")
 
