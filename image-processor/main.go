@@ -122,6 +122,20 @@ func processImage(c *gin.Context) {
 				return
 			}
 			img, err = imageman.Resize(img, width, height)
+		} else if strings.Contains(t, "flip") {
+			values := strings.Split(t, ":")
+			if len(values) != 2 {
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "provide direction: horizontal or vertical" })
+				return
+			}
+			direction := values[1]
+
+			if direction != "horizontal" && direction != "vertical" {
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "provide direction: horizontal or vertical" })
+				return
+			}
+
+			img, err = imageman.Flip(img, direction)
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid transformation type" })
 			return

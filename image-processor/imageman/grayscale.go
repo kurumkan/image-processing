@@ -15,7 +15,7 @@ func Grayscale(img image.Image) (image.Image, error) {
 	for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++  {
 		for	x := minX; x < maxX; x++ {
 			r, g, b, _ := img.At(x, y).RGBA()
-			med := uint8(float32(r) * 0.299 + float32(g) * 0.587 + float32(b) * 0.114)
+			med := uint8((int(float32(r) * 0.299 + float32(g) * 0.587 + float32(b) * 0.114)) >> 8)
 			newColor := color.RGBA{med, med, med, 1}
 
 			draw.Draw(result, image.Rect(x, y, x + 1, y + 1),  &image.Uniform{newColor}, image.Pt(x, y), draw.Src)
