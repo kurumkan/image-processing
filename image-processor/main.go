@@ -47,7 +47,7 @@ func processImage(c *gin.Context) {
 	transformationList := strings.Split(transformations, ",")
 
 	for _, t := range(transformationList) {
-		if strings.Contains(t, "blur") {
+		if strings.Contains(t, "blur:") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
@@ -64,7 +64,28 @@ func processImage(c *gin.Context) {
 			}
 
 			img, err = imageman.Blur(img, size)
-		} else if strings.Contains(t, "brightness") {
+		}  else if strings.Contains(t, "blur-face") {
+            img, err = imageman.BlurFace(img)
+        } else if strings.Contains(t, "crop-face") {
+            values := strings.Split(t, ":")
+            if len(values) == 3 {
+                width, err := strconv.Atoi(values[1])
+                if err != nil {
+                    fmt.Println("Invalid width", err, width)
+                    c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid width" })
+                    return
+                }
+                height, err := strconv.Atoi(values[2])
+                if err != nil {
+                    fmt.Println("Invalid height", err, height)
+                    c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid height" })
+                    return
+                }
+                img, err = imageman.CropFace(img, width, height)
+            } else {
+                img, err = imageman.CropFace(img, 0, 0)
+            }
+        } else if strings.Contains(t, "brightness") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
@@ -122,7 +143,38 @@ func processImage(c *gin.Context) {
 				return
 			}
 			img, err = imageman.Resize(img, width, height)
-		} else {
+		} else if strings.Contains(t, "flip") {
+			values := strings.Split(t, ":")
+			if len(values) != 2 {
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "provide direction: horizontal or vertical" })
+				return
+			}
+			direction := values[1]
+
+			if direction != "horizontal" && direction != "vertical" {
+				c.JSON(http.StatusBadRequest, gin.H{ "message": "provide direction: horizontal or vertical" })
+				return
+			}
+
+			img, err = imageman.Flip(img, direction)
+		} else if strings.Contains(t, "border") {
+            values := strings.Split(t, ":")
+            if len(values) != 3 {
+                c.JSON(http.StatusBadRequest, gin.H{ "message": "provide border color and width" })
+                return
+            }
+
+            borderWidth, err := strconv.Atoi(values[1])
+            if err != nil {
+                fmt.Println("Invalid width", err, borderWidth)
+                c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid width" })
+                return
+            }
+
+            borderColor := values[2]
+
+            img, err = imageman.Border(img, borderWidth, borderColor)
+        } else {
 			c.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid transformation type" })
 			return
 		}
