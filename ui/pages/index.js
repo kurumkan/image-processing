@@ -89,6 +89,12 @@ const LandingPage = () => {
                     <Col xs={24} md={12}>
                         <Image
                             src="/demo.jpg"
+                            placeholder={
+                                <Image
+                                    preview={false}
+                                    src="/demo-low.jpg"
+                                />
+                            }
                             preview={false}
                             alt="demo image"
                         />
