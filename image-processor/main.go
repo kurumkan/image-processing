@@ -47,7 +47,7 @@ func processImage(c *gin.Context) {
 	transformationList := strings.Split(transformations, ",")
 
 	for _, t := range(transformationList) {
-		if strings.Contains(t, "blur") {
+		if strings.Contains(t, "blur:") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
@@ -64,7 +64,9 @@ func processImage(c *gin.Context) {
 			}
 
 			img, err = imageman.Blur(img, size)
-		} else if strings.Contains(t, "brightness") {
+		}  else if strings.Contains(t, "blur-face") {
+            img, err = imageman.BlurFace(img)
+        } else if strings.Contains(t, "brightness") {
 			values := strings.Split(t, ":")
 
 			if len(values) < 2 {
